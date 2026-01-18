@@ -39,10 +39,28 @@
             font-size: 1.1em;
         }
 
-        /* Admin Mode Toggle */
+        /* Admin Panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: #111;
+            border-left: 2px solid #333;
+            padding: 20px;
+            transition: right 0.3s ease;
+            z-index: 2000;
+            overflow-y: auto;
+        }
+
+        .admin-panel.open {
+            right: 0;
+        }
+
         .admin-toggle {
             position: fixed;
-            bottom: 20px;
+            top: 20px;
             right: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -60,49 +78,107 @@
             transform: scale(1.05);
         }
 
-        .upload-zone {
-            max-width: 1200px;
-            margin: 0 auto 40px;
-            padding: 60px 20px;
-            border: 3px dashed #333;
-            border-radius: 20px;
-            text-align: center;
+        .admin-header {
+            margin-bottom: 20px;
+        }
+
+        .admin-header h2 {
+            margin-bottom: 10px;
+        }
+
+        .close-admin {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: #111;
+            margin-bottom: 20px;
+        }
+
+        .password-section {
+            margin-bottom: 20px;
+        }
+
+        .password-section input {
+            width: 100%;
+            padding: 10px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 5px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .password-section button {
+            width: 100%;
+            padding: 10px;
+            background: #667eea;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .upload-section {
             display: none;
         }
 
-        .upload-zone.active {
+        .upload-section.active {
             display: block;
+        }
+
+        .upload-zone {
+            padding: 40px 20px;
+            border: 3px dashed #333;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+            margin-bottom: 20px;
         }
 
         .upload-zone:hover {
             border-color: #667eea;
-            background: #1a1a1a;
-        }
-
-        .upload-zone.dragover {
-            border-color: #764ba2;
-            background: #1a1a2a;
-        }
-
-        .upload-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-
-        .upload-zone h2 {
-            margin-bottom: 10px;
-            font-size: 1.5em;
-        }
-
-        .upload-zone p {
-            color: #666;
         }
 
         #fileInput {
             display: none;
+        }
+
+        .admin-gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .admin-gallery-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .admin-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .admin-delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .gallery {
@@ -134,33 +210,6 @@
             height: 100%;
             object-fit: cover;
             display: block;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 59, 48, 0.9);
-            color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            transition: background 0.2s ease;
-        }
-
-        .admin-mode .delete-btn {
-            display: flex;
-        }
-
-        .delete-btn:hover {
-            background: rgba(255, 59, 48, 1);
         }
 
         .lightbox {
@@ -206,32 +255,18 @@
             color: #666;
         }
 
-        .empty-state h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .admin-notice {
-            background: rgba(102, 126, 234, 0.1);
-            border: 2px solid #667eea;
-            padding: 15px;
-            border-radius: 10px;
+        .loading {
             text-align: center;
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            display: none;
-        }
-
-        .admin-notice.active {
-            display: block;
-        }
-
-        .admin-notice p {
-            color: #667eea;
-            font-weight: 600;
+            padding: 40px;
+            color: #888;
         }
 
         @media (max-width: 768px) {
+            .admin-panel {
+                width: 100%;
+                right: -100%;
+            }
+
             .gallery {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 15px;
@@ -239,17 +274,6 @@
 
             .header h1 {
                 font-size: 2em;
-            }
-
-            .upload-zone {
-                padding: 40px 20px;
-            }
-
-            .admin-toggle {
-                bottom: 10px;
-                right: 10px;
-                padding: 10px 20px;
-                font-size: 14px;
             }
         }
     </style>
@@ -260,20 +284,36 @@
         <p>Professional video thumbnail designs</p>
     </div>
 
-    <div class="admin-notice" id="adminNotice">
-        <p>🔓 Admin Mode Active — You can upload and delete images</p>
+    <button class="admin-toggle" id="adminToggle">🔒 Admin</button>
+
+    <div class="admin-panel" id="adminPanel">
+        <button class="close-admin" id="closeAdmin">✕ Close</button>
+        
+        <div class="admin-header">
+            <h2>Admin Panel</h2>
+        </div>
+
+        <div class="password-section" id="passwordSection">
+            <p style="color: #888; margin-bottom: 10px;">Enter password to manage gallery</p>
+            <input type="password" id="passwordInput" placeholder="Enter password">
+            <button onclick="checkPassword()">Unlock</button>
+        </div>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="upload-zone" id="uploadZone">
+                <div style="font-size: 2em; margin-bottom: 10px;">📸</div>
+                <p>Click or drag images to upload</p>
+                <input type="file" id="fileInput" accept="image/*" multiple>
+            </div>
+            
+            <h3 style="margin-bottom: 10px;">Your Images</h3>
+            <div class="admin-gallery" id="adminGallery"></div>
+        </div>
     </div>
 
-    <div class="upload-zone" id="uploadZone">
-        <div class="upload-icon">📸</div>
-        <h2>Upload Your Thumbnails</h2>
-        <p>Drag & drop images here or click to browse</p>
-        <input type="file" id="fileInput" accept="image/*" multiple>
+    <div class="gallery" id="gallery">
+        <div class="loading">Loading gallery...</div>
     </div>
-
-    <div class="gallery" id="gallery"></div>
-
-    <button class="admin-toggle" id="adminToggle">🔒 Admin Mode</button>
 
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close" id="lightboxClose">×</button>
@@ -281,142 +321,181 @@
     </div>
 
     <script>
+        // Simple password - change this to whatever you want
+        const ADMIN_PASSWORD = "admin123";
+        
+        const adminToggle = document.getElementById('adminToggle');
+        const adminPanel = document.getElementById('adminPanel');
+        const closeAdmin = document.getElementById('closeAdmin');
+        const passwordSection = document.getElementById('passwordSection');
+        const uploadSection = document.getElementById('uploadSection');
+        const passwordInput = document.getElementById('passwordInput');
         const uploadZone = document.getElementById('uploadZone');
         const fileInput = document.getElementById('fileInput');
         const gallery = document.getElementById('gallery');
+        const adminGallery = document.getElementById('adminGallery');
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightboxImg');
         const lightboxClose = document.getElementById('lightboxClose');
-        const adminToggle = document.getElementById('adminToggle');
-        const adminNotice = document.getElementById('adminNotice');
 
-        let images = [];
-        let isAdminMode = false;
+        let isAuthenticated = false;
 
-        // Admin Mode Toggle
+        // Admin panel toggle
         adminToggle.addEventListener('click', () => {
-            isAdminMode = !isAdminMode;
-            
-            if (isAdminMode) {
-                adminToggle.textContent = '🔓 Exit Admin Mode';
-                adminToggle.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
-                uploadZone.classList.add('active');
-                adminNotice.classList.add('active');
-                document.body.classList.add('admin-mode');
+            adminPanel.classList.add('open');
+        });
+
+        closeAdmin.addEventListener('click', () => {
+            adminPanel.classList.remove('open');
+        });
+
+        // Password check
+        function checkPassword() {
+            if (passwordInput.value === ADMIN_PASSWORD) {
+                isAuthenticated = true;
+                passwordSection.style.display = 'none';
+                uploadSection.classList.add('active');
+                loadAdminGallery();
             } else {
-                adminToggle.textContent = '🔒 Admin Mode';
-                adminToggle.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                uploadZone.classList.remove('active');
-                adminNotice.classList.remove('active');
-                document.body.classList.remove('admin-mode');
+                alert('Incorrect password');
+                passwordInput.value = '';
             }
+        }
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
         });
 
-        // Click to upload (only in admin mode)
+        // Upload handling
         uploadZone.addEventListener('click', () => {
-            if (isAdminMode) fileInput.click();
+            if (isAuthenticated) fileInput.click();
         });
 
-        // File input change
         fileInput.addEventListener('change', (e) => {
-            if (isAdminMode) handleFiles(e.target.files);
+            handleFiles(e.target.files);
         });
 
-        // Drag and drop (only in admin mode)
         uploadZone.addEventListener('dragover', (e) => {
-            if (isAdminMode) {
-                e.preventDefault();
-                uploadZone.classList.add('dragover');
-            }
+            e.preventDefault();
+            uploadZone.style.borderColor = '#667eea';
         });
 
         uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragover');
+            uploadZone.style.borderColor = '#333';
         });
 
         uploadZone.addEventListener('drop', (e) => {
-            if (isAdminMode) {
-                e.preventDefault();
-                uploadZone.classList.remove('dragover');
-                handleFiles(e.dataTransfer.files);
-            }
+            e.preventDefault();
+            uploadZone.style.borderColor = '#333';
+            if (isAuthenticated) handleFiles(e.dataTransfer.files);
         });
 
-        // Handle uploaded files
         async function handleFiles(files) {
             for (let file of files) {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = async (e) => {
-                        const newImage = {
-                            id: Date.now() + Math.random(),
-                            src: e.target.result
-                        };
-                        images.push(newImage);
-                        
-                        // Save to persistent storage
-                        await saveToStorage();
-                        renderGallery();
+                        const imageId = Date.now() + Math.random();
+                        try {
+                            await window.storage.set(`img_${imageId}`, e.target.result, true);
+                            await loadGallery();
+                            await loadAdminGallery();
+                        } catch (error) {
+                            console.error('Upload failed:', error);
+                            alert('Upload failed. Images must be under 5MB.');
+                        }
                     };
                     reader.readAsDataURL(file);
                 }
             }
         }
 
-        // Save images to storage
-        async function saveToStorage() {
+        async function deleteImage(imageId) {
+            if (!isAuthenticated) return;
             try {
-                await window.storage.set('gallery_images', JSON.stringify(images));
+                await window.storage.delete(`img_${imageId}`, true);
+                await loadGallery();
+                await loadAdminGallery();
             } catch (error) {
-                console.log('Storage not available, using memory only');
+                console.error('Delete failed:', error);
             }
         }
 
-        // Load images from storage
-        async function loadFromStorage() {
+        async function loadGallery() {
             try {
-                const result = await window.storage.get('gallery_images');
-                if (result && result.value) {
-                    images = JSON.parse(result.value);
-                    renderGallery();
+                const result = await window.storage.list('img_', true);
+                if (!result || !result.keys || result.keys.length === 0) {
+                    gallery.innerHTML = '<div class="empty-state"><h3>No thumbnails yet</h3><p>Gallery is being set up</p></div>';
+                    return;
                 }
+
+                const images = [];
+                for (let key of result.keys) {
+                    try {
+                        const imgData = await window.storage.get(key, true);
+                        if (imgData && imgData.value) {
+                            images.push({
+                                id: key.replace('img_', ''),
+                                src: imgData.value
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading image:', error);
+                    }
+                }
+
+                if (images.length === 0) {
+                    gallery.innerHTML = '<div class="empty-state"><h3>No thumbnails yet</h3></div>';
+                    return;
+                }
+
+                gallery.innerHTML = images.map(img => `
+                    <div class="gallery-item">
+                        <img src="${img.src}" alt="Thumbnail" onclick="openLightbox('${img.src}')">
+                    </div>
+                `).join('');
             } catch (error) {
-                console.log('No stored images found');
+                console.error('Gallery load error:', error);
+                gallery.innerHTML = '<div class="empty-state"><h3>Error loading gallery</h3></div>';
             }
         }
 
-        // Render gallery
-        function renderGallery() {
-            if (images.length === 0) {
-                gallery.innerHTML = '<div class="empty-state"><h3>No thumbnails yet</h3><p>Enable Admin Mode to start uploading</p></div>';
-                return;
+        async function loadAdminGallery() {
+            if (!isAuthenticated) return;
+            
+            try {
+                const result = await window.storage.list('img_', true);
+                if (!result || !result.keys || result.keys.length === 0) {
+                    adminGallery.innerHTML = '<p style="color: #666;">No images uploaded yet</p>';
+                    return;
+                }
+
+                const images = [];
+                for (let key of result.keys) {
+                    try {
+                        const imgData = await window.storage.get(key, true);
+                        if (imgData && imgData.value) {
+                            images.push({
+                                id: key.replace('img_', ''),
+                                src: imgData.value
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error loading admin image:', error);
+                    }
+                }
+
+                adminGallery.innerHTML = images.map(img => `
+                    <div class="admin-gallery-item">
+                        <img src="${img.src}" alt="Thumbnail">
+                        <button class="admin-delete" onclick="deleteImage('${img.id}')">×</button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Admin gallery load error:', error);
             }
-
-            gallery.innerHTML = images.map(img => `
-                <div class="gallery-item" data-id="${img.id}">
-                    <img src="${img.src}" alt="Thumbnail">
-                    <button class="delete-btn" onclick="deleteImage(${img.id})">×</button>
-                </div>
-            `).join('');
-
-            // Add click handlers for lightbox
-            document.querySelectorAll('.gallery-item img').forEach(img => {
-                img.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openLightbox(img.src);
-                });
-            });
         }
 
-        // Delete image
-        async function deleteImage(id) {
-            if (!isAdminMode) return;
-            images = images.filter(img => img.id !== id);
-            await saveToStorage();
-            renderGallery();
-        }
-
-        // Lightbox
         function openLightbox(src) {
             lightboxImg.src = src;
             lightbox.classList.add('active');
@@ -433,7 +512,7 @@
         });
 
         // Initialize
-        loadFromStorage();
+        loadGallery();
     </script>
 </body>
 </html>
