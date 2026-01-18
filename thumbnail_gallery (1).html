@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Thumbnail Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        /* Admin Mode Toggle */
+        .admin-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s ease;
+            z-index: 100;
+        }
+
+        .admin-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .upload-zone {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            padding: 60px 20px;
+            border: 3px dashed #333;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #111;
+            display: none;
+        }
+
+        .upload-zone.active {
+            display: block;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #1a1a1a;
+        }
+
+        .upload-zone.dragover {
+            border-color: #764ba2;
+            background: #1a1a2a;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .upload-zone p {
+            color: #666;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 16/9;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #1a1a1a;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 59, 48, 0.9);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background 0.2s ease;
+        }
+
+        .admin-mode .delete-btn {
+            display: flex;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 59, 48, 1);
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 1001;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .admin-notice {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: none;
+        }
+
+        .admin-notice.active {
+            display: block;
+        }
+
+        .admin-notice p {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .upload-zone {
+                padding: 40px 20px;
+            }
+
+            .admin-toggle {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>My Thumbnail Portfolio</h1>
+        <p>Professional video thumbnail designs</p>
+    </div>
+
+    <div class="admin-notice" id="adminNotice">
+        <p>🔓 Admin Mode Active — You can upload and delete images</p>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📸</div>
+        <h2>Upload Your Thumbnails</h2>
+        <p>Drag & drop images here or click to browse</p>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <button class="admin-toggle" id="adminToggle">🔒 Admin Mode</button>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightboxClose">×</button>
+        <img id="lightboxImg" src="" alt="">
+    </div>
+
+    <script>
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const gallery = document.getElementById('gallery');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
+        const adminToggle = document.getElementById('adminToggle');
+        const adminNotice = document.getElementById('adminNotice');
+
+        let images = [];
+        let isAdminMode = false;
+
+        // Admin Mode Toggle
+        adminToggle.addEventListener('click', () => {
+            isAdminMode = !isAdminMode;
+            
+            if (isAdminMode) {
+                adminToggle.textContent = '🔓 Exit Admin Mode';
+                adminToggle.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                uploadZone.classList.add('active');
+                adminNotice.classList.add('active');
+                document.body.classList.add('admin-mode');
+            } else {
+                adminToggle.textContent = '🔒 Admin Mode';
+                adminToggle.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                uploadZone.classList.remove('active');
+                adminNotice.classList.remove('active');
+                document.body.classList.remove('admin-mode');
+            }
+        });
+
+        // Click to upload (only in admin mode)
+        uploadZone.addEventListener('click', () => {
+            if (isAdminMode) fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            if (isAdminMode) handleFiles(e.target.files);
+        });
+
+        // Drag and drop (only in admin mode)
+        uploadZone.addEventListener('dragover', (e) => {
+            if (isAdminMode) {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            }
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            if (isAdminMode) {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        // Handle uploaded files
+        async function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const newImage = {
+                            id: Date.now() + Math.random(),
+                            src: e.target.result
+                        };
+                        images.push(newImage);
+                        
+                        // Save to persistent storage
+                        await saveToStorage();
+                        renderGallery();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Save images to storage
+        async function saveToStorage() {
+            try {
+                await window.storage.set('gallery_images', JSON.stringify(images));
+            } catch (error) {
+                console.log('Storage not available, using memory only');
+            }
+        }
+
+        // Load images from storage
+        async function loadFromStorage() {
+            try {
+                const result = await window.storage.get('gallery_images');
+                if (result && result.value) {
+                    images = JSON.parse(result.value);
+                    renderGallery();
+                }
+            } catch (error) {
+                console.log('No stored images found');
+            }
+        }
+
+        // Render gallery
+        function renderGallery() {
+            if (images.length === 0) {
+                gallery.innerHTML = '<div class="empty-state"><h3>No thumbnails yet</h3><p>Enable Admin Mode to start uploading</p></div>';
+                return;
+            }
+
+            gallery.innerHTML = images.map(img => `
+                <div class="gallery-item" data-id="${img.id}">
+                    <img src="${img.src}" alt="Thumbnail">
+                    <button class="delete-btn" onclick="deleteImage(${img.id})">×</button>
+                </div>
+            `).join('');
+
+            // Add click handlers for lightbox
+            document.querySelectorAll('.gallery-item img').forEach(img => {
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openLightbox(img.src);
+                });
+            });
+        }
+
+        // Delete image
+        async function deleteImage(id) {
+            if (!isAdminMode) return;
+            images = images.filter(img => img.id !== id);
+            await saveToStorage();
+            renderGallery();
+        }
+
+        // Lightbox
+        function openLightbox(src) {
+            lightboxImg.src = src;
+            lightbox.classList.add('active');
+        }
+
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadFromStorage();
+    </script>
+</body>
+</html>
