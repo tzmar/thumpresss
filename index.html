@@ -393,21 +393,60 @@
         async function handleFiles(files) {
             for (let file of files) {
                 if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = async (e) => {
+                    try {
+                        // Compress image before storing
+                        const compressedImage = await compressImage(file);
                         const imageId = Date.now() + Math.random();
-                        try {
-                            await window.storage.set(`img_${imageId}`, e.target.result, true);
-                            await loadGallery();
-                            await loadAdminGallery();
-                        } catch (error) {
-                            console.error('Upload failed:', error);
-                            alert('Upload failed. Images must be under 5MB.');
-                        }
-                    };
-                    reader.readAsDataURL(file);
+                        
+                        await window.storage.set(`img_${imageId}`, compressedImage, true);
+                        await loadGallery();
+                        await loadAdminGallery();
+                    } catch (error) {
+                        console.error('Upload failed:', error);
+                        alert('Upload failed: ' + error.message);
+                    }
                 }
             }
+        }
+
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Resize if too large
+                        const maxDimension = 1920;
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = (height / width) * maxDimension;
+                                width = maxDimension;
+                            } else {
+                                width = (width / height) * maxDimension;
+                                height = maxDimension;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Compress to 80% quality
+                        const compressed = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve(compressed);
+                    };
+                    img.onerror = () => reject(new Error('Failed to load image'));
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(file);
+            });
         }
 
         async function deleteImage(imageId) {
